@@ -1,11 +1,11 @@
 <template>
   <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
     <div class="flex items-center space-x-4 mb-4">
-      <!-- <img :src="photoUrl" alt="Фото" class="w-24 h-24 rounded-full object-cover" /> -->
       <img :src="photoUrl || '/incognito-image.png'" alt="Фото" class="w-24 h-24 rounded-lg object-cover" />
       <div>
         <h1 class="text-3xl font-bold">{{ fullName || "ФИО" }}</h1>
         <p class="text-gray-600">{{ profession || "Профессия" }}</p>
+        <p class="text-green-600 font-bold">{{ formatSalary(desiredSalary) || "10 000" }}</p>
       </div>
     </div>
     <div class="mb-4">
@@ -13,6 +13,7 @@
       <p class="text-gray-700"><strong>Телефон:</strong> {{ phone || "XXX XXX XX XX" }}</p>
       <p class="text-gray-700"><strong>Email:</strong> {{ email || "your-email@mail.com" }}</p>
       <p class="text-gray-700"><strong>Дата рождения:</strong> {{ formatDate(birthDate) || "01.01.2000"}}</p>
+      <p class="text-gray-700"><strong>Ключевые навыки:</strong> {{ skills || "Навык1, Навык2, Навык3, ..." }}</p>
 
       <div v-for="(edu, index) in educationList" :key="index" class="flex flex-col pl-4">
         <h1 class="text-red-600">
@@ -33,17 +34,6 @@
           <p class="text-gray-600"><strong>Год окончания:</strong> {{ edu.year_finish }}</p>
         </div>
       </div>
-
-      <!-- <div v-for="(edu, index) in additionalEducation" :key="index" class="flex flex-col pt-2">
-        <p class="text-gray-600">
-          <strong>Ссылка на {{ index + 1 }} доп образование:</strong> {{ edu.link }}
-        </p>
-      </div> -->
-      <p class="text-gray-700 mt-2"><strong>Желаемая зарплата:</strong> {{ formatSalary(desiredSalary) || "10 000" }}</p>
-    </div>
-    <div class="mb-4">
-      <h2 class="text-xl font-semibold mb-2">Ключевые навыки</h2>
-      <p class="text-gray-700">{{ skills || "Навык1, Навык2, Навык3, ..." }}</p>
     </div>
     <div>
       <h2 class="text-xl font-semibold mb-2">О себе</h2>

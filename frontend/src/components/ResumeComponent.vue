@@ -1,10 +1,40 @@
 <template>
   <div class="grid grid-cols-1 gap-4">
+    <Select v-model="status">
+      <SelectTrigger>
+        <SelectValue placeholder="" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem class="text-blue-600" value="Новый"> Новый </SelectItem>
+          <SelectItem class="text-orange-600" value="Назначено собеседование"> Назначено собеседование </SelectItem>
+          <SelectItem class="text-green-600" value="Принят"> Принят </SelectItem>
+          <SelectItem class="text-red-600" value="Отказ"> Отказ </SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+
+    <!-- Поле для ввода ФИО -->
+    <input
+      v-model="fullName"
+      type="text"
+      placeholder="ФИО"
+      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+    />
+
     <!-- Поле для ввода профессии -->
     <input
       v-model="profession"
       type="text"
       placeholder="Профессия"
+      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+    />
+
+    <!-- Поле для ввода ссылки на фото -->
+    <input
+      v-model="photoUrl"
+      type="text"
+      placeholder="Ссылка на фото"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
 
@@ -36,29 +66,6 @@
       </select>
     </div>
 
-    <!-- Поле для ввода ссылки на фото -->
-    <input
-      v-model="photoUrl"
-      type="text"
-      placeholder="Ссылка на фото"
-      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-    />
-
-    <input
-      v-model="age"
-      type="text"
-      placeholder="Введите возраст"
-      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-    />
-
-    <!-- Поле для ввода ФИО -->
-    <input
-      v-model="fullName"
-      type="text"
-      placeholder="ФИО"
-      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-    />
-
     <!-- Поле для ввода телефона с валидацией -->
     <input
       @input="hasInput = true"
@@ -87,6 +94,28 @@
       placeholder="Дата рождения"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
+
+    <!-- Поле для ввода желаемой зарплаты -->
+    <input
+      v-model="desiredSalary"
+      type="text"
+      placeholder="Желаемая зарплата"
+      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+    />
+
+    <!-- Поле для ввода ключевых навыков -->
+    <textarea
+      v-model="skills"
+      placeholder="Ключевые навыки"
+      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+    ></textarea>
+
+    <!-- Поле для ввода информации о себе -->
+    <textarea
+      v-model="about"
+      placeholder="О себе"
+      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+    ></textarea>
 
     <!-- Выпадающий список для выбора уровня образования -->
 
@@ -166,7 +195,7 @@
             @click="removeEducationBlock(index)"
             class="bg-red-500 text-white px-4 py-2 rounded mt-2"
           >
-            Удалить
+            Удалить образование
           </button>
         </div>
       </div>
@@ -175,65 +204,6 @@
     <button @click="addEducationBlock" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">
       Добавить образование
     </button>
-
-    <!-- Поле для ввода желаемой зарплаты -->
-    <input
-      v-model="desiredSalary"
-      type="text"
-      placeholder="Желаемая зарплата"
-      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-    />
-
-    <!-- Поле для ввода ключевых навыков -->
-    <textarea
-      v-model="skills"
-      placeholder="Ключевые навыки"
-      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-    ></textarea>
-
-    <!-- Поле для ввода информации о себе -->
-    <textarea
-      v-model="about"
-      placeholder="О себе"
-      class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-    ></textarea>
-
-    <Select v-model="status">
-      <SelectTrigger>
-        <SelectValue placeholder="" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectItem class="text-blue-600" value="Новый"> Новый </SelectItem>
-          <SelectItem class="text-orange-600" value="Назначено собеседование"> Назначено собеседование </SelectItem>
-          <SelectItem class="text-green-600" value="Принят"> Принят </SelectItem>
-          <SelectItem class="text-red-600" value="Отказ"> Отказ </SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-
-    <!-- Дополнительное образование (добавление и удаление)
-    <div>
-      <h3 class="text-lg font-semibold mb-2">Дополнительное образование</h3>
-      <div
-        v-for="(edu, index) in additionalEducation"
-        :key="index"
-        class="flex items-center space-x-4 pt-4"
-      >
-        <input
-          v-model="edu.link"
-          type="text"
-          placeholder="Ссылка на сертификат"
-          class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-        />
-        <button @click="removeEducation(index)" class="bg-red-500 text-white px-4 py-2 rounded">
-          Удалить
-        </button>
-      </div>
-      <button @click="addEducation" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">
-        Добавить образование
-      </button>
-    </div> -->
 
     <!-- Кнопка для применения данных -->
     <button @click="applyData" class="bg-green-500 text-white px-4 py-2 rounded mt-4">
@@ -255,7 +225,6 @@ import {
   SelectValue
 } from '@/components/ui/select'
 
-const age = ref('')
 const profession = ref('')
 const photoUrl = ref('')
 const fullName = ref('')
@@ -294,7 +263,6 @@ const applyData = () => {
   isApply.value = true
   const formData = {
     profession: profession.value,
-    age: age.value,
     status: status.value,
     city: searchQuery.value,
     photoUrl: photoUrl.value,

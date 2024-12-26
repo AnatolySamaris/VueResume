@@ -6,6 +6,17 @@
         <h2 class="text-2xl font-semibold mb-6">Введите данные для резюме</h2>
       </div>
       <ResumeComponent @submit="handleFormSubmit" />
+      <!-- <ResumeComponent v-model:profession="resumeData.profession"
+                      v-model:city="resumeData.city"
+                      v-model:photoUrl="resumeData.photoUrl"
+                      v-model:fullName="resumeData.fullName"
+                      v-model:phone="resumeData.phone"
+                      v-model:email="resumeData.email"
+                      v-model:birthDate="resumeData.birthDate"
+                      v-model:desiredSalary="resumeData.desiredSalary"
+                      v-model:skills="resumeData.skills"
+                      v-model:about="resumeData.about"
+                      v-model:educationList="resumeData.educationList" /> -->
     </div>
     <!-- Шаблон резюме -->
     <div class="flex-1 pl-4 mt-12">
@@ -81,7 +92,6 @@ const transformResumeData = (data) => {
   return {
     name: data.fullName,
     profession: data.profession,
-    age: Number(data.age),
     status: "Новый",
     photo: data.photoUrl,
     city: data.city,
