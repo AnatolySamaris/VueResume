@@ -1,6 +1,7 @@
 <template>
   <div class="grid grid-cols-1 gap-4">
-    <Select v-model="status">
+    <!-- Поле для статуса -->
+    <Select v-model="modelValue.status">
       <SelectTrigger>
         <SelectValue placeholder="" />
       </SelectTrigger>
@@ -16,7 +17,7 @@
 
     <!-- Поле для ввода ФИО -->
     <input
-      v-model="fullName"
+      v-model="modelValue.fullName"
       type="text"
       placeholder="ФИО"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
@@ -24,7 +25,7 @@
 
     <!-- Поле для ввода профессии -->
     <input
-      v-model="profession"
+      v-model="modelValue.profession"
       type="text"
       placeholder="Профессия"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
@@ -32,64 +33,50 @@
 
     <!-- Поле для ввода ссылки на фото -->
     <input
-      v-model="photoUrl"
+      v-model="modelValue.photoUrl"
       type="text"
       placeholder="Ссылка на фото"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
 
     <!-- Поле для поиска города -->
-    <div class="relative flex flex-col">
-      <input
-        v-model="searchQuery"
-        type="text"
-        :placeholder="searchQuery || 'Введите город'"
-        class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-      />
+    <!-- <VueSingleSelect
+      v-model="modelValue.city"
+      :options="cities"
+      option-label="title"
+      placeholder="Введите город"
+      @search="onInputCity"
+      @select="handleSelectCity"
+    /> -->
 
-      <select
-        @change="handleSelectCity"
-        v-if="isCityListVisible"
-        id="cities"
-        size="5"
-        class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-      >
-        <option v-if="cities.length === 0" disabled>Ничего не найдено</option>
-        <option
-          v-for="city in cities"
-          :key="city.id"
-          :value="city.id"
-          class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-        >
-          {{ city.title }}
-        </option>
-      </select>
-    </div>
+    <vue-single-select
+      v-model="selectedCity"
+      :options="cities"
+      option-label="title"
+      placeholder="Введите город"
+      @input="onInputCity"
+      @change="handleSelectCity"
+    />
 
-    <!-- Поле для ввода телефона с валидацией -->
+    <!-- Поле для ввода телефона -->
     <input
-      @input="hasInput = true"
-      v-model="phone"
+      v-model="modelValue.phone"
       type="text"
       placeholder="Телефон"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
-    <p v-if="!isPhoneValid && hasInput" class="text-red-600">
-      Номер телефона должен содержать только цифры и быть длиной от 6 до 10 символов
-    </p>
 
     <!-- Поле для ввода email -->
     <input
-      @input="hasEmail = true"
-      v-model="email"
+      v-model="modelValue.email"
       type="email"
       placeholder="Email"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
-    <p v-if="!isEmailValid && hasEmail" class="text-red-600">Введите корректный email</p>
+
     <!-- Поле для выбора даты рождения -->
     <input
-      v-model="birthDate"
+      v-model="modelValue.birthDate"
       type="date"
       placeholder="Дата рождения"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
@@ -97,7 +84,7 @@
 
     <!-- Поле для ввода желаемой зарплаты -->
     <input
-      v-model="desiredSalary"
+      v-model="modelValue.desiredSalary"
       type="text"
       placeholder="Желаемая зарплата"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
@@ -105,100 +92,89 @@
 
     <!-- Поле для ввода ключевых навыков -->
     <textarea
-      v-model="skills"
+      v-model="modelValue.skills"
       placeholder="Ключевые навыки"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     ></textarea>
 
     <!-- Поле для ввода информации о себе -->
     <textarea
-      v-model="about"
+      v-model="modelValue.about"
       placeholder="О себе"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     ></textarea>
 
-    <!-- Выпадающий список для выбора уровня образования -->
+    <!-- Поля для ввода образования -->
+    <div v-for="(edu, index) in modelValue.educationList" :key="index" class="flex flex-col gap-4 mt-4">
+      <Select v-model="edu.educationLevel">
+        <SelectTrigger>
+          <SelectValue placeholder="Образование" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Варианты уровней образования</SelectLabel>
+            <SelectItem value="school"> Среднее </SelectItem>
+            <SelectItem value="colledge"> Среднее специальное </SelectItem>
+            <SelectItem value="not_university"> Неоконченное высшее </SelectItem>
+            <SelectItem value="university"> Высшее </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
 
-    <!-- Поля для ввода учебного заведения и специальности -->
-    <div>
-      <div v-if="isVisibleEducation">
-        <div v-for="(edu, index) in educationList" :key="index" class="flex flex-col gap-4 mt-4">
-          <!-- Выпадающий список для выбора уровня образования -->
-          <Select v-model="edu.educationLevel">
-            <!-- Привязка к educationList -->
-            <SelectTrigger>
-              <SelectValue placeholder="Образование" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Варианты уровней образования</SelectLabel>
-                <SelectItem value="school"> Среднее </SelectItem>
-                <SelectItem value="colledge"> Среднее специальное </SelectItem>
-                <SelectItem value="not_university"> Неоконченное высшее </SelectItem>
-                <SelectItem value="university"> Высшее </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
-          <div
-            v-if="
-              edu.educationLevel === 'university' ||
-              edu.educationLevel === 'not_university' ||
-              edu.educationLevel === 'colledge'
-            "
-            class="flex flex-col gap-4"
+      <div
+        v-if="
+          edu.educationLevel === 'university' ||
+          edu.educationLevel === 'not_university' ||
+          edu.educationLevel === 'colledge'
+        "
+        class="flex flex-col gap-4"
+      >
+        <div class="relative flex flex-col">
+          <input
+            v-model="edu.stateUnivesity"
+            type="text"
+            placeholder="Учебное заведение"
+            class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+            @input="fetchUniversities(index)"
+          />
+          <select
+            @change="handleSelectUniversity(index, $event)"
+            v-if="edu.isVisibleUniversities"
+            size="5"
+            class="absolute z-10 mt-1 w-full border border-gray-300 p-3 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
           >
-            <div class="relative flex flex-col">
-              <input
-                v-model="edu.stateUnivesity"
-                type="text"
-                :placeholder="'Учебное заведение ' + (index + 1)"
-                class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-                @input="fetchUniversities(index)"
-              />
-              <select
-                @change="handleSelectUniversity(index, $event)"
-                v-if="edu.isVisibleUniversities"
-                size="5"
-                class="bg-gray-50 border z-10 top-4 border-gray-300 text-gray-900 text-sm rounded-lg"
-              >
-                <option v-if="edu.universities.length === 0" disabled>Ничего не найдено</option>
-                <option v-for="univers in edu.universities" :key="univers.id">
-                  {{ univers.title }}
-                </option>
-              </select>
-            </div>
-            <!-- Поля для ввода факультета, специальности, года окончания -->
-            <input
-              v-model="edu.faculty"
-              type="text"
-              placeholder="Факультет"
-              class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-            />
-            <input
-              v-model="edu.specialization"
-              type="text"
-              placeholder="Специализация"
-              class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-            />
-            <input
-              v-model="edu.year_finish"
-              type="text"
-              placeholder="Год окончания"
-              class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-            />
-          </div>
-          <!-- Поле для ввода учебного заведения -->
-
-          <!-- Кнопка для удаления блока -->
-          <button
-            @click="removeEducationBlock(index)"
-            class="bg-red-500 text-white px-4 py-2 rounded mt-2"
-          >
-            Удалить образование
-          </button>
+            <option v-if="edu.universities.length === 0" disabled>Ничего не найдено</option>
+            <option v-for="univers in edu.universities" :key="univers.id" :value="univers">
+              {{ univers.title }}
+            </option>
+          </select>
         </div>
+        <input
+          v-model="edu.faculty"
+          type="text"
+          placeholder="Факультет"
+          class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+        />
+        <input
+          v-model="edu.specialization"
+          type="text"
+          placeholder="Специализация"
+          class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+        />
+        <input
+          v-model="edu.year_finish"
+          type="text"
+          placeholder="Год окончания"
+          class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
+        />
       </div>
+
+      <button
+        @click="removeEducationBlock(index)"
+        class="bg-red-500 text-white px-4 py-2 rounded mt-2"
+      >
+        Удалить образование
+      </button>
     </div>
 
     <button @click="addEducationBlock" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">
@@ -213,8 +189,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, defineEmits } from 'vue'
-import StatusResume from '../components/StatusResume.vue'
+import { ref, watch, computed } from 'vue'
+import VueSingleSelect from "vue-single-select";
 import {
   Select,
   SelectContent,
@@ -225,107 +201,53 @@ import {
   SelectValue
 } from '@/components/ui/select'
 
-const profession = ref('')
-const photoUrl = ref('')
-const fullName = ref('')
-const email = ref('')
-const birthDate = ref('')
-const education = ref('')
-const desiredSalary = ref('')
-const skills = ref('')
-const about = ref('')
-const hasInput = ref(false)
-const hasEmail = ref(false)
-const phone = ref('')
-const regexPhone = /^\d{6,10}$/
-const regexEmail = /^\S+@\S+\.\S+$/
-const isPhoneValid = computed(() => regexPhone.test(phone.value))
-const isEmailValid = computed(() => regexEmail.test(email.value))
-const isApply = ref(false)
-const emit = defineEmits(['submit'])
-const isCityListVisible = ref(false)
-
-const isVisibleEducation = ref(false)
-
-const status = ref('Новый')
-
-const statusComputed = computed(() => {
-  const labels = {
-    new: 'Новый',
-    interview: 'Назначено собеседование',
-    complete: 'Принят',
-    denied: 'Отказ'
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    required: true
   }
-  return labels[status.value] || 'Новый'
 })
 
-const applyData = () => {
-  isApply.value = true
-  const formData = {
-    profession: profession.value,
-    status: status.value,
-    city: searchQuery.value,
-    photoUrl: photoUrl.value,
-    fullName: fullName.value,
-    phone: phone.value,
-    email: email.value,
-    birthDate: birthDate.value,
-    education: education.value,
-    desiredSalary: desiredSalary.value,
-    skills: skills.value,
-    about: about.value,
-    additionalEducation: additionalEducation.value,
-    educationList: educationList.value // Добавляем список образований
-  }
-  emit('submit', formData)
-}
+const emit = defineEmits(['update:modelValue', 'submit'])
 
-// Логика для добавления и удаления дополнительного образования
-const additionalEducation = ref([])
-
-const addEducation = () => {
-  additionalEducation.value.push({ link: '' })
-}
-
-const removeEducation = (index) => {
-  additionalEducation.value.splice(index, 1)
-}
-
-// Логика для динамического добавления образования
-const educationList = ref([])
-
+// Логика для добавления и удаления образования
 const addEducationBlock = () => {
-  isVisibleEducation.value = true
-  educationList.value.push({
+  props.modelValue.educationList.push({
+    educationLevel: '',
     stateUnivesity: '',
     faculty: '',
     specialization: '',
     year_finish: '',
+    universities: [],
     isVisibleUniversities: false
   })
 }
 
 const removeEducationBlock = (index) => {
-  educationList.value.splice(index, 1)
+  props.modelValue.educationList.splice(index, 1)
+}
+
+// Логика для применения данных
+const applyData = () => {
+  emit('submit', props.modelValue)
 }
 
 // Логика для поиска городов
 const searchQuery = ref('')
 const cities = ref([])
-const selectedCity = ref(null)
-const isVisible = computed(
-  () => isCityListVisible.value && searchQuery.value.trim() !== '' && cities.value.length > 0
-)
+const selectedCity = ref('')
 
-watch(searchQuery, (newValue) => {
-  if (newValue.trim() !== '') {
-    fetchCities()
-    isCityListVisible.value = true // показать выпадающий список при вводе текста
+const onInputCity = (query) => {
+  // console.log('ONE')
+  if (query) {
+    console.log(query.data)
+    if (query.data !== null) searchQuery.value += query.data
+    else searchQuery.value = searchQuery.value.slice(0, -1)
   } else {
-    cities.value = []
-    isCityListVisible.value = false // скрыть список, если строка пуста
+    searchQuery.value = ""
   }
-})
+  fetchCities()
+}
 
 const fetchCities = () => {
   const params = new URLSearchParams({
@@ -336,6 +258,7 @@ const fetchCities = () => {
     need_all: '0',
     count: '10',
     q: searchQuery.value
+    // q: modelValue.city
   })
 
   fetch(`api/method/database.getCities?${params}`, { headers })
@@ -349,43 +272,21 @@ const fetchCities = () => {
 }
 
 const handleSelectCity = (event) => {
-  selectedCity.value = event.target.value
-  searchQuery.value = event.target.options[event.target.selectedIndex].text
-  isCityListVisible.value = false // скрыть выпадающий список
-  cities.value = []
+  console.log('TWO')
+  console.log(event)
+  console.log(event.target.value)
+  console.log(selectedCity.value)
+  props.modelValue.city = event.target.value
 }
 
 // Логика для поиска университетов
 const headers = { Authorization: `Bearer ${import.meta.env.VITE_KEY_NAME}` }
 
-const fetchUniversities = (index) => {
-  const stateUniversity = educationList.value[index].stateUnivesity
-  const params = new URLSearchParams({
-    v: '5.81',
-    q: stateUniversity,
-    city_id: selectedCity.value,
-    count: '10'
-  })
-
-  fetch(`api/method/database.getUniversities?${params}`, { headers })
-    .then((response) => response.json())
-    .then((data) => {
-      educationList.value[index].universities = data.response.items
-      educationList.value[index].isVisibleUniversities =
-        stateUniversity.trim() !== '' && data.response.items.length > 0
-    })
-    .catch((error) => {
-      console.error('Ошибка при получении данных:', error)
-      educationList.value[index].universities = []
-      educationList.value[index].isVisibleUniversities = false
-    })
-}
-
 // Обработка выбора университета
 const handleSelectUniversity = (index, event) => {
-  const selectedUniversity = event.target.value
-  educationList.value[index].stateUnivesity = selectedUniversity
-  educationList.value[index].isVisibleUniversities = false
+  const selectedUniversity = JSON.parse(event.target.value)
+  props.modelValue.educationList[index].stateUnivesity = selectedUniversity.title
+  props.modelValue.educationList[index].isVisibleUniversities = false
 }
 </script>
 

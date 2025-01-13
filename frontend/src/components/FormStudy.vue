@@ -45,51 +45,33 @@
 <script setup>
 const props = defineProps({
   photoUrl: String,
-  stateUnivesity: String,
-  faculty: String,
-  spec: String,
-  year_finish: String,
   fullName: String,
   profession: String,
   city: String,
   phone: String,
   email: String,
   birthDate: String,
-  educationLabel: String,
-  education: String,
   desiredSalary: String,
   skills: String,
   about: String,
-  additionalEducation: Array,
-  university: String,
   educationList: Array
 })
 
-// Функция для форматирования даты
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0'); // Добавляем ведущий ноль, если нужно
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day}.${month}.${year}`; // Возвращаем дату в формате dd.mm.yyyy
+  return `${day}.${month}.${year}`;
 }
 
-// Функция для форматирования зарплаты
 const formatSalary = (salary) => {
   if (!salary) return '';
-
   const salaryString = String(salary);
-
-  // Определяем разделитель: точка или запятая
   const separator = salaryString.includes(',') ? ',' : '.';
-
-  // Разделяем число на целую и дробную части
   const [integerPart, fractionalPart] = salaryString.split(separator);
-
-  // Форматируем целую часть
   const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-
   return fractionalPart ? `${formattedIntegerPart}${separator}${fractionalPart}` : formattedIntegerPart;
 }
 </script>
