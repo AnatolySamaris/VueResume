@@ -21,40 +21,35 @@ class Resume
 
     #[ORM\Column(length: 255)]
     #[Groups(["resume:read", "resume:write"])]
-    #[Assert\Length(min: 2, max:255)]
+    #[Assert\Length(max:255)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["resume:read", "resume:write"])]
-    #[Assert\Length(min: 3, max:255)]
+    #[Assert\Length(max:255)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
     private ?string $profession = null;
 
-    #[ORM\Column]
-    #[Groups(["resume:read", "resume:write"])]
-    #[Assert\NotNull]
-    private ?int $age = null;
-
     #[ORM\Column(length: 255)]
     #[Groups(["resume:read", "resume:write"])]
-    #[Assert\Length(min: 3, max:255)]
+    #[Assert\Length(max:255)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["resume:read", "resume:write"])]
-    #[Assert\Length(min: 6, max:20)]
+    #[Assert\Length(max:20)]
     #[Assert\NotNull]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["resume:read", "resume:write"])]
     #[Assert\Email]
-    #[Assert\Length(min: 6, max:255)]   // min: a@a.ru
+    #[Assert\Length(max:255)]
     #[Assert\NotNull]
     private ?string $email = null;
 
@@ -71,14 +66,14 @@ class Resume
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(["resume:read", "resume:write"])]
-    #[Assert\Length(min: 10, max: 2048)]
+    #[Assert\Length(max: 2048)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
     private ?string $about = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["resume:read", "resume:write"])]
-    #[Assert\Length(min: 5, max:255)]
+    #[Assert\Length(max:255)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
     private ?string $skills = null;
@@ -132,18 +127,6 @@ class Resume
     public function setProfession(string $profession): static
     {
         $this->profession = $profession;
-
-        return $this;
-    }
-
-    public function getAge(): ?int
-    {
-        return $this->age;
-    }
-
-    public function setAge(int $age): static
-    {
-        $this->age = $age;
 
         return $this;
     }

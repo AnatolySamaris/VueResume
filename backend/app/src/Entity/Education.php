@@ -16,7 +16,6 @@ class Education
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["resume:read", "resume:write"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 512, nullable: true)]
@@ -31,9 +30,9 @@ class Education
     #[Groups(["resume:read", "resume:write"])]
     private ?string $specialty = null;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    #[ORM\Column(nullable: true)]
     #[Groups(["resume:read", "resume:write"])]
-    private ?\DateTimeImmutable $endYear = null;
+    private ?int $endYear = null;
 
     #[ORM\ManyToOne(inversedBy: 'education', cascade: ["persist"])]
     #[ORM\JoinColumn(nullable: false)]
@@ -93,12 +92,12 @@ class Education
         return $this;
     }
 
-    public function getEndYear(): ?\DateTimeImmutable
+    public function getEndYear(): ?int
     {
         return $this->endYear;
     }
 
-    public function setEndYear(?\DateTimeImmutable $endYear): static
+    public function setEndYear(?int $endYear): static
     {
         $this->endYear = $endYear;
 

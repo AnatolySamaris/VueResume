@@ -19,17 +19,21 @@
     <input
       v-model="modelValue.fullName"
       type="text"
-      placeholder="ФИО"
+      placeholder="ФИО*"
+      @input="validateName"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
+    <p v-if="fullNameError" class="text-red-500 text-sm mt-1">{{ fullNameError }}</p>
 
     <!-- Поле для ввода профессии -->
     <input
       v-model="modelValue.profession"
       type="text"
-      placeholder="Профессия"
+      placeholder="Профессия*"
+      @input="validateProfession"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
+    <p v-if="professionError" class="text-red-500 text-sm mt-1">{{ professionError }}</p>
 
     <!-- Поле для ввода ссылки на фото -->
     <input
@@ -40,69 +44,72 @@
     />
 
     <!-- Поле для поиска города -->
-    <!-- <VueSingleSelect
+    <vue-single-select
       v-model="modelValue.city"
       :options="cities"
       option-label="title"
-      placeholder="Введите город"
-      @search="onInputCity"
-      @select="handleSelectCity"
-    /> -->
-
-    <vue-single-select
-      v-model="selectedCity"
-      :options="cities"
-      option-label="title"
-      placeholder="Введите город"
+      placeholder="Введите город*"
       @input="onInputCity"
-      @change="handleSelectCity"
     />
 
     <!-- Поле для ввода телефона -->
     <input
       v-model="modelValue.phone"
       type="text"
-      placeholder="Телефон"
+      placeholder="Телефон*"
+      ref="phoneInput"
+      @input="validatePhone"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
+    <p v-if="phoneError" class="text-red-500 text-sm mt-1">{{ phoneError }}</p>
 
     <!-- Поле для ввода email -->
     <input
       v-model="modelValue.email"
       type="email"
-      placeholder="Email"
+      placeholder="Email*"
+      @input="validateEmail"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
+    <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
 
     <!-- Поле для выбора даты рождения -->
     <input
       v-model="modelValue.birthDate"
       type="date"
-      placeholder="Дата рождения"
+      placeholder="Дата рождения*"
+      @input="validateBirthDate"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
+    <p v-if="birthDateError" class="text-red-500 text-sm mt-1">{{ birthDateError }}</p>
 
     <!-- Поле для ввода желаемой зарплаты -->
     <input
       v-model="modelValue.desiredSalary"
       type="text"
-      placeholder="Желаемая зарплата"
+      placeholder="Желаемая зарплата*"
+      @input="validateDesiredSalary"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     />
+    <p v-if="desiredSalaryError" class="text-red-500 text-sm mt-1">{{ desiredSalaryError }}</p>
 
     <!-- Поле для ввода ключевых навыков -->
     <textarea
       v-model="modelValue.skills"
-      placeholder="Ключевые навыки"
+      placeholder="Ключевые навыки*"
+      @input="validateSkills"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     ></textarea>
+    <p v-if="skillsError" class="text-red-500 text-sm mt-1">{{ skillsError }}</p>
 
     <!-- Поле для ввода информации о себе -->
     <textarea
       v-model="modelValue.about"
-      placeholder="О себе"
+      placeholder="О себе*"
+      @input="validateAbout"
       class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
     ></textarea>
+    <p v-if="aboutError" class="text-red-500 text-sm mt-1">{{ aboutError }}</p>
 
     <!-- Поля для ввода образования -->
     <div v-for="(edu, index) in modelValue.educationList" :key="index" class="flex flex-col gap-4 mt-4">
@@ -129,25 +136,22 @@
         "
         class="flex flex-col gap-4"
       >
-        <div class="relative flex flex-col">
+        <div v-if="edu.educationLevel === 'university' || edu.educationLevel === 'not_university'">
+          <vue-single-select
+            v-model="edu.stateUnivesity"
+            :options="univers"
+            option-label="title"
+            placeholder="Учебное заведение"
+            @input="(query) => onInputUni(query, index)"
+          />
+        </div>
+        <div v-if="edu.educationLevel === 'colledge'">
           <input
             v-model="edu.stateUnivesity"
             type="text"
             placeholder="Учебное заведение"
             class="border border-gray-300 p-3 rounded-lg shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-            @input="fetchUniversities(index)"
           />
-          <select
-            @change="handleSelectUniversity(index, $event)"
-            v-if="edu.isVisibleUniversities"
-            size="5"
-            class="absolute z-10 mt-1 w-full border border-gray-300 p-3 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 ease-in-out"
-          >
-            <option v-if="edu.universities.length === 0" disabled>Ничего не найдено</option>
-            <option v-for="univers in edu.universities" :key="univers.id" :value="univers">
-              {{ univers.title }}
-            </option>
-          </select>
         </div>
         <input
           v-model="edu.faculty"
@@ -181,16 +185,18 @@
       Добавить образование
     </button>
 
-    <!-- Кнопка для применения данных -->
-    <button @click="applyData" class="bg-green-500 text-white px-4 py-2 rounded mt-4">
-      Применить
+    <!-- Кнопка для сохранения резюме -->
+    <button @click="submitForm" class="bg-green-500 text-white px-4 py-2 rounded mt-4">
+      Сохранить
     </button>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
-import VueSingleSelect from "vue-single-select";
+import { ref, onMounted } from 'vue'
+import VueSingleSelect from "vue-single-select"
+import Inputmask from "inputmask";
+import { useRouter } from 'vue-router';
 import {
   Select,
   SelectContent,
@@ -207,6 +213,91 @@ const props = defineProps({
     required: true
   }
 })
+
+const router = useRouter();
+
+const phoneInput = ref(null)
+onMounted(() => {
+  const mask = new Inputmask('9999999999');
+  mask.mask(phoneInput.value);
+});
+
+const fullNameError = ref('')
+const professionError = ref('')
+const phoneError = ref('')
+const emailError = ref('')
+const birthDateError = ref('')
+const desiredSalaryError = ref('')
+const skillsError = ref('')
+const aboutError = ref('')
+
+const validateName = () => {
+  if (!props.modelValue.fullName) {
+    fullNameError.value = 'Не введено ФИО'
+  } else {
+    fullNameError.value = ''
+  }
+}
+
+const validateProfession = () => {
+  if (!props.modelValue.profession) {
+    professionError.value = 'Не введена профессия'
+  } else {
+    professionError.value = ''
+  }
+}
+
+const validatePhone = () => {
+  if (!props.modelValue.phone) {
+    phoneError.value = 'Не введен номер телефона'
+  } else {
+    phoneError.value = ''
+  }
+}
+
+const validateEmail = () => {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(props.modelValue.email)) {
+    emailError.value = 'Введите корректный email'
+  } else if (!props.modelValue.email) {
+    emailError.value = 'Не введен email'
+  } else {
+    emailError.value = ''
+  }
+}
+
+const validateBirthDate = () => {
+  if (!props.modelValue.birthDate) {
+    birthDateError.value = 'Не выбрана дата рождения'
+  } else {
+    birthDateError.value = ''
+  }
+}
+
+const validateDesiredSalary = () => {
+  if (!props.modelValue.desiredSalary) {
+    desiredSalaryError.value = 'Не введена желаемая зарплата'
+  } else {
+    desiredSalaryError.value = ''
+  }
+}
+
+const validateSkills = () => {
+  if (!props.modelValue.skills) {
+    skillsError.value = 'Не введены навыки'
+  } else {
+    skillsError.value = ''
+  }
+}
+
+const validateAbout = () => {
+  if (!props.modelValue.about) {
+    aboutError.value = 'Не введена информация о себе'
+  } else {
+    aboutError.value = ''
+  }
+}
+
 
 const emit = defineEmits(['update:modelValue', 'submit'])
 
@@ -227,26 +318,28 @@ const removeEducationBlock = (index) => {
   props.modelValue.educationList.splice(index, 1)
 }
 
-// Логика для применения данных
-const applyData = () => {
-  emit('submit', props.modelValue)
-}
-
 // Логика для поиска городов
 const searchQuery = ref('')
 const cities = ref([])
-const selectedCity = ref('')
+var selectedCityId = 0;
 
 const onInputCity = (query) => {
-  // console.log('ONE')
   if (query) {
-    console.log(query.data)
-    if (query.data !== null) searchQuery.value += query.data
-    else searchQuery.value = searchQuery.value.slice(0, -1)
+    if (query.data !== null) {
+      if (query.title) {
+        props.modelValue.city = query.title
+        selectedCityId = query.id
+        return
+      } else {
+        searchQuery.value += query.data
+        fetchCities()
+      }
+    } else searchQuery.value = searchQuery.value.slice(0, -1)
   } else {
     searchQuery.value = ""
+    props.modelValue.city = ""
+    selectedCityId = 0
   }
-  fetchCities()
 }
 
 const fetchCities = () => {
@@ -258,36 +351,109 @@ const fetchCities = () => {
     need_all: '0',
     count: '10',
     q: searchQuery.value
-    // q: modelValue.city
   })
 
-  fetch(`api/method/database.getCities?${params}`, { headers })
-    .then((response) => response.json())
-    .then((data) => {
-      cities.value = data.response.items
-    })
-    .catch((error) => {
-      console.error('Ошибка при получении данных:', error)
-    })
+  fetch(`/vkapi/method/database.getCities?${params}`, { headers })
+  .then((response) => {
+    if (!response.ok) {
+      return response.text().then(text => {
+        console.error('Ошибка:', text); // Логируем текст ответа
+        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+      });
+    }
+    return response.json();
+  })
+  .then((data) => {
+    cities.value = data.response.items;
+  })
+  .catch((error) => {
+    console.error('Ошибка при получении данных:', error);
+  });
+
 }
 
-const handleSelectCity = (event) => {
-  console.log('TWO')
-  console.log(event)
-  console.log(event.target.value)
-  console.log(selectedCity.value)
-  props.modelValue.city = event.target.value
-}
 
 // Логика для поиска университетов
+const searchQueryUni = ref('')
+const univers = ref([])
+
+const onInputUni = (query, index) => {
+  if (query) {
+    if (query.data !== null) {
+      if (query.title) {
+        props.modelValue.educationList[index].stateUnivesity = query.title
+        return
+      } else {
+        searchQueryUni.value += query.data
+        fetchUniversities()
+      }
+    } else searchQueryUni.value = searchQueryUni.value.slice(0, -1)
+  } else {
+    searchQueryUni.value = ""
+    props.modelValue.edu.stateUnivesity = ""
+  }
+}
+
 const headers = { Authorization: `Bearer ${import.meta.env.VITE_KEY_NAME}` }
 
-// Обработка выбора университета
-const handleSelectUniversity = (index, event) => {
-  const selectedUniversity = JSON.parse(event.target.value)
-  props.modelValue.educationList[index].stateUnivesity = selectedUniversity.title
-  props.modelValue.educationList[index].isVisibleUniversities = false
+const fetchUniversities = () => {
+  const params = new URLSearchParams({
+    v: '5.81',
+    q: searchQueryUni.value,
+    city_id: selectedCityId,
+    count: '10'
+  })
+  
+  fetch(`/vkapi/method/database.getUniversities?${params}`, { headers })
+    .then((response) => {
+      if (!response.ok) {
+        return response.text().then(text => {
+          console.error('Ошибка:', text); // Логируем текст ответа
+          throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+        });
+      }
+      return response.json().then(data => {
+        return data;
+      });
+    })
+    .then((data) => {
+      univers.value = data.response.items;
+    })
+    .catch((error) => {
+      console.error('Ошибка при получении данных:', error);
+    });
 }
+
+const checkEmptyFields = () => {
+  const requiredFields = {
+    'ФИО': props.modelValue.fullName, 
+    'Профессия': props.modelValue.profession, 
+    'Телефон': props.modelValue.phone,
+    'Email': props.modelValue.email, 
+    'Дата рождения': props.modelValue.birthDate, 
+    'Желаемая зарплата': props.modelValue.desiredSalary,
+    'Город': props.modelValue.city, 
+    'Навыки': props.modelValue.skills, 
+    'О себе': props.modelValue.about
+  }
+  const emptyFields = [];
+  Object.keys(requiredFields).forEach(key => {
+    if (!requiredFields[key]) {
+        emptyFields.push(key);
+    }
+  });
+  if (emptyFields.length > 0) {
+    alert('Заполните следующие поля:\n' + emptyFields.join(', '))
+    return false;
+  }
+  return true;
+}
+
+const submitForm = () => {
+  if (!checkEmptyFields()) return;
+  emit('submit', props.modelValue); // Передаем данные в родительский компонент
+}
+
 </script>
 
 <style scoped></style>

@@ -38,20 +38,21 @@
           itemKey="id"
         >
           <template #item="{ element }">
-            <div class="list-group-item cursor-pointer">
-              <div><strong>Имя:</strong> {{ element.name }}</div>
-              <div><strong>Профессия:</strong> {{ element.profession }}</div>
-              <div><strong>Кол-во лет:</strong> {{ element.age }}</div>
-              <div class="flex items-center">
-                <strong>Фото:</strong>
-                <img :src="element.photo" class="ml-2 h-12 w-12 rounded-full" />
+            <div 
+              class="list-group-item cursor-pointer" 
+              :class="{
+                '!bg-blue-300': element.status.value === 'Новый',
+                '!bg-orange-300': element.status.value === 'Назначено собеседование',
+                '!bg-green-300': element.status.value === 'Принят',
+                '!bg-red-300': element.status.value === 'Отказ'
+              }"
+              @click="goToEditPage(element.id)"
+            >
+              <div class="flex items-center justify-center">
+                <img :src="element.photo" class="h-36 w-36 rounded-lg" />
               </div>
-              <button
-                @click="$router.push(`/edit/${element.id}`)"
-                class="bg-blue-500 mt-2 mb-2 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
-              >
-                Редактировать
-              </button>
+              <div class="text-xl"><strong>{{ element.profession }}</strong></div>
+              <div class="text-lg">{{ element.name }}, {{ calculateAge(element.birthday) }}</div>
             </div>
           </template>
         </draggable>
@@ -73,15 +74,31 @@ export default {
   },
   setup() {
     const sceneStore = useSceneStore()
-
-    console.log(sceneStore.candidates)
+    const router = useRouter()
 
     onMounted(() => {
       sceneStore.fetchCandidates()
     })
 
+    const calculateAge = (birthday) => {
+      const birthDate = new Date(birthday)
+      const today = new Date()
+      let age = today.getFullYear() - birthDate.getFullYear()
+      const monthDifference = today.getMonth() - birthDate.getMonth()
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--
+      }
+      return age
+    }
+
+    const goToEditPage = (id) => {
+      router.push(`/edit/${id}`)
+    }
+
     return {
-      sceneStore
+      sceneStore,
+      calculateAge,
+      goToEditPage
     }
   }
 }
@@ -98,8 +115,7 @@ export default {
   border: 1px solid #007bff;
   margin: 5px 0;
   border-radius: 4px;
-
-  background-color: #f8f9fa; /* Light background for better visibility */
+  background-color: #f8f9fa;
 }
 
 img {

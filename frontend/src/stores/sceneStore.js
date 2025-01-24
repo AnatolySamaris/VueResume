@@ -9,7 +9,7 @@ export const useSceneStore = defineStore('scene', () => {
     'Назначено собеседование': [],
     Отказ: []
   })
-  const statusList = ref(['Новый', 'Принят', 'Назначено собеседование', 'Отказ'])
+  const statusList = ref(['Новый', 'Назначено собеседование', 'Принят', 'Отказ'])
   const showStatus = ref('loading')
 
   const statusCount = ref({})
@@ -17,7 +17,7 @@ export const useSceneStore = defineStore('scene', () => {
   async function fetchCandidates() {
     showStatus.value = 'loading'
     try {
-      const response = await fetch('http://localhost:8080/api/cv')
+      const response = await fetch('api/cv')
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
@@ -26,14 +26,15 @@ export const useSceneStore = defineStore('scene', () => {
 
       // Filter data by status after loading
 
-      resume.value['Новый'] = candidates.value.filter((item) => item.status === 'Новый')
-      resume.value['Принят'] = candidates.value.filter((item) => item.status === 'Принят')
+      resume.value['Новый'] = candidates.value.filter((item) => item.status.value === 'Новый')
+      resume.value['Принят'] = candidates.value.filter((item) => item.status.value === 'Принят')
       resume.value['Назначено собеседование'] = candidates.value.filter(
-        (item) => item.status === 'Назначено собеседование'
+        (item) => item.status.value === 'Назначено собеседование'
       )
-      resume.value['Отказ'] = candidates.value.filter((item) => item.status === 'Отказ')
+      resume.value['Отказ'] = candidates.value.filter((item) => item.status.value === 'Отказ')
 
       showStatus.value = 'complete'
+
     } catch (error) {
       console.error('Ошибка загрузки данных:', error)
       showStatus.value = 'failed'
@@ -44,27 +45,23 @@ export const useSceneStore = defineStore('scene', () => {
     const { added } = evt
 
     if (added) {
-      const movedCandidate = added.element // Get moved element
+      const movedCandidate = added.element
       const newStatus = statusList.value.find((status) =>
         resume.value[status].includes(movedCandidate)
-      ) // Determine new status
+      )
 
-      // Update candidate status
-      movedCandidate.status = newStatus // Set new status
+      movedCandidate.status.value = newStatus
 
-      // Send request to update status on the server
-      fetch(`http://localhost:8080/api/cv/${movedCandidate.id}/status/update`, {
+      fetch(`/api/cv/${movedCandidate.id}/status/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: newStatus }) // Use new status
+        body: JSON.stringify({ status: newStatus })
       })
         .then((response) => {
           if (!response.ok) {
             console.error('Ошибка при обновлении статуса')
-          } else {
-            console.log(`Статус кандидата '${movedCandidate.name}' обновлен на '${newStatus}'`)
           }
         })
         .catch((error) => {

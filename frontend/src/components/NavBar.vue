@@ -1,19 +1,18 @@
 <template>
   <div class="flex justify-start ml-4 mt-4">
     <div class="flex flex-wrap gap-4">
-      <h1 @click="route.push('/')" class="text-purple-700 cursor-pointer hover:text-red-700">
+      <button @click="route.push('/')" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
         Главная страница
-      </h1>
-      <h1 @click="route.push('/new')" class="text-purple-700 cursor-pointer hover:text-red-700">
+      </button>
+      <button @click="route.push('/new')" class="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700">
         Новое резюме
-      </h1>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const route = useRouter()
 </script>

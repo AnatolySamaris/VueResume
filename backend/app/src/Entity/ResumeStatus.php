@@ -15,7 +15,6 @@ class ResumeStatus
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["resume:read", "resume:write"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
