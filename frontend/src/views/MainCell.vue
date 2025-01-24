@@ -29,7 +29,7 @@
       v-else-if="sceneStore.showStatus === 'complete'"
     >
       <div v-for="(status, index) in sceneStore.statusList" :key="index" class="col-3">
-        <h3>{{ status }} ({{ sceneStore.statusCount[status] || 0 }})</h3>
+        <h3><strong>{{ status }} ({{ sceneStore.statusCount[status] || 0 }})</strong></h3>
         <draggable
           class="list-group"
           v-model="sceneStore.resume[status]"
@@ -49,7 +49,7 @@
               @click="goToEditPage(element.id)"
             >
               <div class="flex items-center justify-center">
-                <img :src="element.photo" class="h-36 w-36 rounded-lg" />
+                <img :src="element.photo || '/incognito-image.png'" class="h-36 w-36 rounded-lg" />
               </div>
               <div class="text-xl"><strong>{{ element.profession }}</strong></div>
               <div class="text-lg">{{ element.name }}, {{ calculateAge(element.birthday) }}</div>
