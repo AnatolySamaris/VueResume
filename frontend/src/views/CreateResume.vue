@@ -29,8 +29,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import FormStudy from '../components/FormStudy.vue'
-import ResumeComponent from '@/components/ResumeComponent.vue'
+import FormStudy from '../components/ResumeTemplate.vue'
+import ResumeComponent from '@/components/ResumeForm.vue'
 
 const resumeData = ref({
   status: 'Новый',

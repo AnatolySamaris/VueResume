@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ResumeForm from '@/views/ResumeForm.vue'
+import CreateResume from '@/views/CreateResume.vue'
 import EditResume from '@/views/EditResume.vue'
 import NotFound from '@/components/NotFound.vue'
 
@@ -15,7 +15,7 @@ const router = createRouter({
     {
       path: '/new',
       name: 'new',
-      component: ResumeForm
+      component: CreateResume
     },
     {
       path: '/edit/:id',

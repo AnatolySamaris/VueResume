@@ -30,8 +30,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import ResumeComponent from '@/components/ResumeComponent.vue';
-import FormStudy from '@/components/FormStudy.vue';
+import ResumeComponent from '@/components/ResumeForm.vue';
+import FormStudy from '@/components/ResumeTemplate.vue';
 
 const route = useRoute();
 const router = useRouter();

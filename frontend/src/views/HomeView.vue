@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-import MainCell from './MainCell.vue'
+import MainCell from './ResumeColumns.vue'
 </script>
